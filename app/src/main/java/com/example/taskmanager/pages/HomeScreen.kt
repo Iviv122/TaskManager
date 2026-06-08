@@ -34,9 +34,6 @@ fun HomeScreen(onNavigateToSettings: () -> Unit) {
             taskList = tests,
             modifier = Modifier.weight(1f)
         )
-        Button(onClick = {onNavigateToSettings()}){
-            Text("Open settings")
-        }
     }
 }
 
