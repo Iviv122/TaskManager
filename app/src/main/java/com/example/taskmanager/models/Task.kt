@@ -5,7 +5,6 @@ public class Task(
     private val title : String,
     private val desc : String
 ){
-
     fun getTitle() : String{
         return title
     }

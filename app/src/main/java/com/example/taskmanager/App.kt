@@ -1,5 +1,9 @@
 package com.example.taskmanager
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,18 +26,32 @@ import com.example.taskmanager.pages.HomeScreen
 import com.example.taskmanager.pages.SettingsScreen
 
 
+@Composable
+fun Screen(content: @Composable () -> Unit) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+
+        ) { innerPadding ->
+        Box(
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            content()
+        }
+    }
+}
 
 @Composable
-fun Screen(navController: NavHostController, content: @Composable () -> Unit) {
-
+public fun MyApp() {
+    val navController = rememberNavController()
     val navBackStackEntry =
         navController.currentBackStackEntryAsState()
     val currentRoute =
         navBackStackEntry.value?.destination?.route
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
+            NavigationBar(
+                windowInsets = NavigationBarDefaults.windowInsets,
+            ) {
                 Destination.entries.forEachIndexed { index, destination ->
                     NavigationBarItem(
                         selected = currentRoute == destination.route,
@@ -48,40 +66,51 @@ fun Screen(navController: NavHostController, content: @Composable () -> Unit) {
                                 contentDescription = destination.contentDescription
                             )
                         },
-                        label = {Text(destination.label)}
+                        label = { Text(destination.label) }
                     )
                 }
             }
         }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding)
+    ) { paddingValues ->
+        NavHost(
+            navController = navController,
+            startDestination = Destination.HOME.route,
+            enterTransition = {
+                fadeIn(
+                    tween(200)
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    tween(200)
+                )
+            },
+            popEnterTransition = {
+                fadeIn(
+                    tween(200)
+                )
+            },
+            popExitTransition = {
+                fadeOut(
+                    tween(200)
+                )
+            },
+
         ) {
-            content()
-        }
-    }
-}
+            Destination.entries.forEach { destination ->
+                composable(destination.route) {
+                    when (destination) {
+                        Destination.HOME -> Screen() {
+                            HomeScreen(
+                                onNavigateToSettings = {
+                                    navController.navigate(route = Destination.SETTINGS)
+                                }
+                            )
+                        }
 
-@Composable
-public fun MyApp() {
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = Destination.HOME.route
-    ) {
-        Destination.entries.forEach { destination ->
-            composable(destination.route) {
-                when (destination) {
-                    Destination.HOME -> Screen(navController) {
-                        HomeScreen(
-                            onNavigateToSettings = {
-                                navController.navigate(route = Destination.SETTINGS)
-                            }
-                        )
+                        Destination.Add -> Screen() { AddScreen() {} }
+                        Destination.SETTINGS -> Screen() { SettingsScreen() }
                     }
-
-                    Destination.Add -> Screen(navController) { AddScreen(){} }
-                    Destination.SETTINGS -> Screen(navController) { SettingsScreen() }
                 }
             }
         }
