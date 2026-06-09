@@ -52,10 +52,10 @@ fun TaskCard(task: Task, modifier: Modifier = Modifier) {
                     .padding(10.dp)
             ) {
 
-                Text(task.getTitle())
-                Text(task.getId().toString())
+                Text(task.title)
+                Text(task.id.toString())
             }
-            Text(task.getDesc())
+            Text(task.desc)
         }
     }
 }
@@ -65,7 +65,7 @@ fun TaskList(taskList: List<Task>, modifier: Modifier = Modifier) {
     LazyColumn(modifier = modifier) {
         items(
             items = taskList,
-            key = { task -> task.getId() }
+            key = { task -> task.id }
         ) { task ->
             TaskCard(
                 task = remember { task },

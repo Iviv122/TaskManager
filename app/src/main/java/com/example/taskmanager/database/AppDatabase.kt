@@ -9,7 +9,7 @@ import com.example.taskmanager.entities.TaskDao
 
 @Database(entities = [Task::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): TaskDao
+    abstract fun taskDao(): TaskDao
 
     companion object {
         private var INSTANCE: AppDatabase? = null
