@@ -1,4 +1,4 @@
-package com.example.taskmanager.models
+package com.example.taskmanager.entities
 
 public class Task(
     private val id : Int,
