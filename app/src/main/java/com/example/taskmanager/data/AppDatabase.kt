@@ -1,11 +1,11 @@
-package com.example.taskmanager.database
+package com.example.taskmanager.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.taskmanager.entities.Task
-import com.example.taskmanager.entities.TaskDao
+import com.example.taskmanager.data.source.local.Task
+import com.example.taskmanager.data.source.local.TaskDao
 
 @Database(entities = [Task::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {

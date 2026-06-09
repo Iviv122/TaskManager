@@ -1,4 +1,4 @@
-package com.example.taskmanager.entities
+package com.example.taskmanager.data.source.local
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
