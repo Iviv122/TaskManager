@@ -1,17 +1,32 @@
 package com.example.taskmanager.entities
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.PrimaryKey
+import androidx.room.Query
 
-public class Task(
-    private val id : Int,
-    private val title : String,
-    private val desc : String
-){
-    fun getTitle() : String{
-        return title
-    }
-    fun getDesc() : String{
-        return desc
-    }
-    fun getId() : Int{
-        return id
-    }
+@Entity
+data class Task(
+    @PrimaryKey val id : Int,
+    @ColumnInfo val title : String,
+    @ColumnInfo val desc : String
+)
+@Dao
+interface TaskDao {
+    @Query("SELECT * FROM task")
+    fun getAll(): List<Task>
+
+    @Query("SELECT * FROM task WHERE id IN (:taskIds)")
+    fun loadAllByIds(taskIds: IntArray): List<Task>
+
+    @Query("SELECT * FROM task WHERE title LIKE :first")
+    fun findByTitle(first: String): Task
+
+    @Insert
+    fun insertAll(vararg tasks: Task)
+
+    @Delete
+    fun delete(task: Task)
 }
