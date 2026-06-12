@@ -1,4 +1,5 @@
 package com.example.taskmanager.data.source.local
+
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,27 +7,31 @@ import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.TypeConverter
+import java.sql.Date
 
 @Entity
 data class Task(
-    @PrimaryKey val id : Int,
-    @ColumnInfo val title : String,
-    @ColumnInfo val desc : String
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo val title: String,
+    @ColumnInfo val date: Long
+
 )
+
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM task")
-    fun getAll(): List<Task>
+    suspend fun getAll(): List<Task>
 
     @Query("SELECT * FROM task WHERE id IN (:taskIds)")
-    fun loadAllByIds(taskIds: IntArray): List<Task>
+    suspend fun loadAllByIds(taskIds: IntArray): List<Task>
 
     @Query("SELECT * FROM task WHERE title LIKE :first")
-    fun findByTitle(first: String): Task
+    suspend fun findByTitle(first: String): Task
 
     @Insert
-    fun insertAll(vararg tasks: Task)
+    suspend fun insertAll(vararg tasks: Task)
 
     @Delete
-    fun delete(task: Task)
+    suspend fun delete(task: Task)
 }

@@ -1,11 +1,13 @@
 package com.example.taskmanager
 
+import android.content.Context
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
@@ -14,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -28,15 +31,15 @@ import com.example.taskmanager.pages.SettingsScreen
 fun Screen(content: @Composable () -> Unit) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        ) { innerPadding ->
+    ) { innerPadding ->
         Box(
-            modifier = Modifier.padding(innerPadding)
         ) {
             content()
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun MyApp() {
     val navController = rememberNavController()
@@ -70,8 +73,9 @@ public fun MyApp() {
         }
     ) { paddingValues ->
         NavHost(
+            modifier = Modifier.padding(paddingValues),
             navController = navController,
-            startDestination = Destination.HOME.route,
+            startDestination = Destination.Add.route,
             enterTransition = {
                 fadeIn(
                     tween(200)
@@ -93,19 +97,22 @@ public fun MyApp() {
                 )
             },
 
-        ) {
+            ) {
             Destination.entries.forEach { destination ->
                 composable(destination.route) {
                     when (destination) {
                         Destination.HOME -> Screen() {
                             HomeScreen(
-                                onNavigateToSettings = {
-                                    navController.navigate(route = Destination.SETTINGS)
-                                }
+                                context = LocalContext.current
                             )
                         }
 
-                        Destination.Add -> Screen() { AddScreen() {} }
+                        Destination.Add -> Screen() {
+                            AddScreen(
+                                context = LocalContext.current
+                            )
+                        }
+
                         Destination.SETTINGS -> Screen() { SettingsScreen() }
                     }
                 }
