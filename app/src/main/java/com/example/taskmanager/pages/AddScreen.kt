@@ -29,7 +29,11 @@ import androidx.compose.ui.unit.dp
 import com.example.taskmanager.data.AppDatabase
 import com.example.taskmanager.data.source.local.Task
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Calendar
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.DurationUnit
 
 @ExperimentalMaterial3Api
 fun getSelectedDateTimeMillis(
@@ -55,12 +59,19 @@ suspend fun Add(
     title: String,
     dateState: DatePickerState,
     timeState: TimePickerState
-){
+): Boolean{
+    if(title.isBlank()){
+        return false;
+    }
+    if(dateState.selectedDateMillis == null){
+        return false;
+    }
     val task = Task(title=title,date= getSelectedDateTimeMillis(
         dateState,
         timeState
     ))
     AppDatabase.getDatabase(context).taskDao().insertAll(task);
+    return true;
 }
 
 @ExperimentalMaterial3Api
@@ -69,10 +80,11 @@ fun AddScreen(
     context: Context
 ) {
     var title by remember { mutableStateOf("") }
-    var time = rememberTimePickerState()
-    var date = rememberDatePickerState()
-
-    var coroutine = rememberCoroutineScope()
+    val time = rememberTimePickerState()
+    val date = rememberDatePickerState(
+        initialSelectedDateMillis = System.currentTimeMillis()
+    )
+    val coroutine = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -95,6 +107,7 @@ fun AddScreen(
                 label = { Text("Title") },
             )
             Button(onClick = {
+                // TODO: CLear input
                 coroutine.launch {
                     Add(
                         context=context,
@@ -102,6 +115,10 @@ fun AddScreen(
                         timeState = time,
                         dateState = date
                     )
+                    title = ""
+                    time.minute = 0
+                    time.hour = 0
+                    date.selectedDateMillis = System.currentTimeMillis()
                 }
             }) {
                 Text(
