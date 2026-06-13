@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +24,8 @@ import com.example.taskmanager.data.AppDatabase
 import com.example.taskmanager.data.source.local.Task
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import com.example.taskmanager.util.DateConverter
+
 @Composable
 fun HomeScreen(context: Context) {
 
@@ -39,7 +45,7 @@ fun HomeScreen(context: Context) {
 }
 
 @Composable
-fun TaskCard(task: Task, modifier: Modifier = Modifier) {
+fun TaskCard(task: Task, modifier: Modifier = Modifier,removeId: Int) {
     Card(modifier = modifier) {
         Column(
             modifier =
@@ -56,6 +62,18 @@ fun TaskCard(task: Task, modifier: Modifier = Modifier) {
 
                 Text(task.title)
                 Text(task.id.toString())
+
+                Text(DateConverter.toDate(task.date).toString())
+            }
+            IconButton(
+                onClick = {
+                    //TODO: remove this ele
+                },
+            ){
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Remove"
+                )
             }
         }
     }
@@ -70,7 +88,8 @@ fun TaskList(taskList: List<Task>, modifier: Modifier = Modifier) {
         ) { task ->
             TaskCard(
                 task = remember { task },
-                modifier = remember { Modifier.padding(10.dp) }
+                modifier =  Modifier.padding(10.dp),
+                removeId = task.id
             )
         }
     }

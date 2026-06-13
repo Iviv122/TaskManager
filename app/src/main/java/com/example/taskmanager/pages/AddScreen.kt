@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -27,11 +29,37 @@ import androidx.compose.ui.unit.dp
 import com.example.taskmanager.data.AppDatabase
 import com.example.taskmanager.data.source.local.Task
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
+@ExperimentalMaterial3Api
+fun getSelectedDateTimeMillis(
+    dateState: DatePickerState,
+    timeState: TimePickerState
+): Long {
+    val selectedDate = dateState.selectedDateMillis ?: return 0L
+
+    val calendar = Calendar.getInstance().apply {
+        timeInMillis = selectedDate
+        set(Calendar.HOUR_OF_DAY, timeState.hour)
+        set(Calendar.MINUTE, timeState.minute)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }
+
+    return calendar.timeInMillis
+}
+
+@ExperimentalMaterial3Api
 suspend fun Add(
-    context: Context
+    context: Context,
+    title: String,
+    dateState: DatePickerState,
+    timeState: TimePickerState
 ){
-    val task = Task(title="test",date= System.currentTimeMillis())
+    val task = Task(title=title,date= getSelectedDateTimeMillis(
+        dateState,
+        timeState
+    ))
     AppDatabase.getDatabase(context).taskDao().insertAll(task);
 }
 
@@ -68,7 +96,12 @@ fun AddScreen(
             )
             Button(onClick = {
                 coroutine.launch {
-                    Add(context)
+                    Add(
+                        context=context,
+                        title = title,
+                        timeState = time,
+                        dateState = date
+                    )
                 }
             }) {
                 Text(
