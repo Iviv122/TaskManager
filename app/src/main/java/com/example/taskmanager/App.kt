@@ -75,7 +75,7 @@ public fun MyApp() {
         NavHost(
             modifier = Modifier.padding(paddingValues),
             navController = navController,
-            startDestination = Destination.Add.route,
+            startDestination = Destination.HOME.route,
             enterTransition = {
                 fadeIn(
                     tween(200)

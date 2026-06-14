@@ -1,6 +1,7 @@
 package com.example.taskmanager.pages
 
 import android.content.Context
+import android.widget.TimePicker
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePickerSelectionMode
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -22,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,17 +62,19 @@ suspend fun Add(
     title: String,
     dateState: DatePickerState,
     timeState: TimePickerState
-): Boolean{
-    if(title.isBlank()){
+): Boolean {
+    if (title.isBlank()) {
         return false;
     }
-    if(dateState.selectedDateMillis == null){
+    if (dateState.selectedDateMillis == null) {
         return false;
     }
-    val task = Task(title=title,date= getSelectedDateTimeMillis(
-        dateState,
-        timeState
-    ))
+    val task = Task(
+        title = title, date = getSelectedDateTimeMillis(
+            dateState,
+            timeState
+        )
+    )
     AppDatabase.getDatabase(context).taskDao().insertAll(task);
     return true;
 }
@@ -79,73 +84,76 @@ suspend fun Add(
 fun AddScreen(
     context: Context
 ) {
-    var title by remember { mutableStateOf("") }
-    val time = rememberTimePickerState()
-    val date = rememberDatePickerState(
-        initialSelectedDateMillis = System.currentTimeMillis()
-    )
+    var resetKey by remember { mutableStateOf(0) }
     val coroutine = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(
-            16.dp,
-            alignment = Alignment.CenterVertically
-        )
+    key(
+        resetKey
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(
-                16.dp,
-                alignment = Alignment.CenterHorizontally
-            )
-        ){
-            TextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text("Title") },
-            )
-            Button(onClick = {
-                // TODO: CLear input
-                coroutine.launch {
-                    Add(
-                        context=context,
-                        title = title,
-                        timeState = time,
-                        dateState = date
-                    )
-                    title = ""
-                    time.minute = 0
-                    time.hour = 0
-                    date.selectedDateMillis = System.currentTimeMillis()
-                }
-            }) {
-                Text(
-                    "Add"
-                )
-            }
-        }
 
-        DatePicker(
-            state = date,
-            showModeToggle = false,
-            title = { },
-            headline = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp,14.dp,0.dp,0.dp),
-                    horizontalArrangement = Arrangement.Center
-
-                ) {
-                    TimeInput(
-                        state = time
-                    )
-                }
-
-            },
-            modifier = Modifier.padding(10.dp),
+        var title by remember { mutableStateOf("") }
+        val time = rememberTimePickerState()
+        val date = rememberDatePickerState(
+            initialSelectedDateMillis = System.currentTimeMillis()
         )
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                16.dp,
+                alignment = Alignment.CenterVertically
+            )
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(
+                    16.dp,
+                    alignment = Alignment.CenterHorizontally
+                )
+            ) {
+                TextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") },
+                )
+                Button(onClick = {
+                    // TODO: CLear input
+                    coroutine.launch {
+                        Add(
+                            context = context,
+                            title = title,
+                            timeState = time,
+                            dateState = date
+                        )
+                        resetKey++
+                    }
+                }) {
+                    Text(
+                        "Add"
+                    )
+                }
+            }
+
+            DatePicker(
+                state = date,
+                showModeToggle = false,
+                title = { },
+                headline = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 14.dp, 0.dp, 0.dp),
+                        horizontalArrangement = Arrangement.Center
+
+                    ) {
+                        TimeInput(
+                            state = time
+                        )
+                    }
+
+                },
+                modifier = Modifier.padding(10.dp),
+            )
+        }
     }
 }

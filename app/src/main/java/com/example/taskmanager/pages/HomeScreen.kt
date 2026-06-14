@@ -24,28 +24,77 @@ import com.example.taskmanager.data.AppDatabase
 import com.example.taskmanager.data.source.local.Task
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.taskmanager.util.DateConverter
+import kotlinx.coroutines.launch
+
+suspend fun RemoveItem(id: Int, context: Context) {
+
+    val dao = AppDatabase.getDatabase(context).taskDao()
+
+    val task = dao.loadAllByIds(intArrayOf(id))
+    task.forEach { item ->
+        dao.delete(item)
+    }
+
+}
 
 @Composable
 fun HomeScreen(context: Context) {
 
+    val coroutine = rememberCoroutineScope()
     var tasks by remember {
         mutableStateOf<List<Task>>(emptyList())
     }
 
-    LaunchedEffect(Unit) {
-        tasks = AppDatabase.getDatabase(context).taskDao().getAll()
+    suspend fun reload() {
+        tasks = AppDatabase.getDatabase(context)
+            .taskDao()
+            .getAll()
     }
-    Column{
-        TaskList(
-            taskList = tasks,
-            modifier = Modifier.weight(1f)
-        )
+
+    LaunchedEffect(Unit) {
+        reload()
+    }
+
+    TaskList(
+        taskList = tasks,
+        onDelete = { task ->
+            coroutine.launch {
+                RemoveItem(task.id, context)
+                reload()
+            }
+        },
+    )
+}
+
+@Composable
+fun TaskList(
+    taskList: List<Task>,
+    onDelete: (Task) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(modifier = modifier) {
+        items(taskList, key = { it.id }) { task ->
+            TaskCard(
+                task = task,
+                onDelete = onDelete
+            )
+        }
     }
 }
 
 @Composable
-fun TaskCard(task: Task, modifier: Modifier = Modifier,removeId: Int) {
+fun TaskCard(
+    task: Task,
+    modifier: Modifier = Modifier,
+    onDelete: (Task) -> Unit
+) {
+
     Card(modifier = modifier) {
         Column(
             modifier =
@@ -67,30 +116,14 @@ fun TaskCard(task: Task, modifier: Modifier = Modifier,removeId: Int) {
             }
             IconButton(
                 onClick = {
-                    //TODO: remove this ele
+                    onDelete(task)
                 },
-            ){
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = "Remove"
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun TaskList(taskList: List<Task>, modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier) {
-        items(
-            items = taskList,
-            key = { task -> task.id }
-        ) { task ->
-            TaskCard(
-                task = remember { task },
-                modifier =  Modifier.padding(10.dp),
-                removeId = task.id
-            )
         }
     }
 }
