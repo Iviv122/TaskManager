@@ -1,6 +1,8 @@
 package com.example.taskmanager.pages
 
 import android.content.Context
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.twotone.Close
+import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,15 +31,12 @@ import com.example.taskmanager.data.AppDatabase
 import com.example.taskmanager.data.source.local.Task
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.Alignment
 import com.example.taskmanager.util.DateConverter
 import kotlinx.coroutines.launch
 
-suspend fun RemoveItem(id: Int, context: Context) {
+suspend fun removeItem(id: Int, context: Context) {
 
     val dao = AppDatabase.getDatabase(context).taskDao()
 
@@ -65,7 +69,7 @@ fun HomeScreen(context: Context) {
         taskList = tasks,
         onDelete = { task ->
             coroutine.launch {
-                RemoveItem(task.id, context)
+                removeItem(task.id, context)
                 reload()
             }
         },
@@ -95,35 +99,44 @@ fun TaskCard(
     onDelete: (Task) -> Unit
 ) {
 
-    Card(modifier = modifier) {
+    Card(
+        modifier = modifier
+            .padding(10.dp)
+    ) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
+                    .height(110.dp)
                     .padding(10.dp)
         ) {
-
             Row(
                 modifier = Modifier
-                    .padding(10.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Text(task.title)
-                Text(task.id.toString())
-
-                Text(DateConverter.toDate(task.date).toString())
+                IconButton(
+                    onClick = {
+                        onDelete(task)
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Remove"
+                    )
+                }
             }
-            IconButton(
-                onClick = {
-                    onDelete(task)
-                },
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Remove"
-                )
+                Text("")
+                Text("works from: " + DateConverter.toDate(task.date).toString())
             }
+
         }
     }
 }

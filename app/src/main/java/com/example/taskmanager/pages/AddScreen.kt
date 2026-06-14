@@ -63,14 +63,14 @@ suspend fun Add(
     dateState: DatePickerState,
     timeState: TimePickerState
 ): Boolean {
-    if (title.isBlank()) {
-        return false;
-    }
+    val finalTitle = title.ifBlank { "unnamed" }
+
     if (dateState.selectedDateMillis == null) {
         return false;
     }
     val task = Task(
-        title = title, date = getSelectedDateTimeMillis(
+        title = finalTitle,
+        date = getSelectedDateTimeMillis(
             dateState,
             timeState
         )
