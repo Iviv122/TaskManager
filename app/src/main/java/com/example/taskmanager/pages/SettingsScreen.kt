@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
@@ -20,7 +19,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -30,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.taskmanager.data.SettingsRepository
 import com.example.taskmanager.data.source.local.UpdateTime
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 
@@ -76,7 +73,7 @@ public fun SettingsScreen(context: Context) {
                         Text(
                             text = UpdateTime.entries.firstOrNull { item ->
                                 item.updateTime == value
-                            }?.standartLabel ?: ""
+                            }?.standardLabel ?: ""
                         )
                         Icon(
                             imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -89,7 +86,7 @@ public fun SettingsScreen(context: Context) {
                     ) {
                         UpdateTime.entries.forEach { item ->
                             DropdownMenuItem(
-                                text = { Text(item.standartLabel) },
+                                text = { Text(item.standardLabel) },
                                 onClick = {
                                     expanded = false
                                     coroutine.launch {
