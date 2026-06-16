@@ -1,15 +1,5 @@
 package com.example.taskmanager.data.source.local
 
-import androidx.datastore.core.DataStore
-
-
-class UpdateTimeManager{
-    companion object{
-        public fun get(){
-        }
-    }
-}
-
 public enum class UpdateTime (
     val updateTime: Long,
     val standartLabel: String,

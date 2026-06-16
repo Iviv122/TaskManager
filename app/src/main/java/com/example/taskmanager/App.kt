@@ -113,7 +113,7 @@ public fun MyApp() {
                             )
                         }
 
-                        Destination.SETTINGS -> Screen() { SettingsScreen() }
+                        Destination.SETTINGS -> Screen() { SettingsScreen(context = LocalContext.current) }
                     }
                 }
             }
