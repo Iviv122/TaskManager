@@ -1,9 +1,15 @@
 package com.example.taskmanager.pages
 
 import android.content.Context
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -19,6 +25,9 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.taskmanager.data.SettingsRepository
 import com.example.taskmanager.data.source.local.UpdateTime
 import kotlinx.coroutines.flow.Flow
@@ -38,37 +47,61 @@ public fun SettingsScreen(context: Context) {
         }
     }
     key(value) {
-        Column {
-            Button(
-                onClick = { expanded = !expanded },
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalArrangement =
+                Arrangement.spacedBy(
+                    16.dp,
+                    alignment = Alignment.CenterVertically
+                ),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(
+                    16.dp,
+                    alignment = Alignment.CenterHorizontally
+                )
             ) {
                 Text(
-                    text = UpdateTime.entries.firstOrNull{ item ->
-                        item.updateTime == value
-                    }?.standartLabel ?: ""
+                    "Remind frequency "
                 )
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "dropDown"
-                )
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                UpdateTime.entries.forEach { item ->
-                    DropdownMenuItem(
-                        text = { Text(item.standartLabel) },
-                        onClick = {
-                            expanded = false
-                            coroutine.launch {
-                                SettingsRepository.setUpdateTime(item.updateTime, context)
-                            }
+                Box {
+
+                    Button(
+                        onClick = { expanded = !expanded },
+                    ) {
+                        Text(
+                            text = UpdateTime.entries.firstOrNull { item ->
+                                item.updateTime == value
+                            }?.standartLabel ?: ""
+                        )
+                        Icon(
+                            imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                            contentDescription = "dropDown"
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        UpdateTime.entries.forEach { item ->
+                            DropdownMenuItem(
+                                text = { Text(item.standartLabel) },
+                                onClick = {
+                                    expanded = false
+                                    coroutine.launch {
+                                        SettingsRepository.setUpdateTime(item.updateTime, context)
+                                    }
+                                }
+                            )
                         }
-                    )
+                    }
                 }
+
             }
         }
-
     }
 }
