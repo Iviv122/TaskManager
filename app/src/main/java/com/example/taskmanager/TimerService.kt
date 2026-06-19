@@ -49,13 +49,13 @@ class TimerService : Service() {
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
 
-        startForeground(NOTIFICATION_ID,notification)
+        startForeground(NOTIFICATION_ID, notification)
 
 
         serviceScope.launch {
 
             SettingsRepository.getUpdateTime(application.baseContext).collect { updateTime ->
-                Log.i(NAME,"Freq: $updateTime")
+                Log.i(NAME, "Freq: $updateTime")
                 ChangeTimeDelay(updateTime)
             }
         }
@@ -82,8 +82,6 @@ class TimerService : Service() {
     private fun createMessageJob(repeatTime: Long) {
         if (messageJob == null) {
 
-
-
             Log.i(NAME, "New process")
             messageJob = serviceScope.launch {
                 while (isActive) {
@@ -97,25 +95,29 @@ class TimerService : Service() {
     @RequiresPermission(value = "android.permission.POST_NOTIFICATIONS")
     private suspend fun sendMessage() {
         val taskDao = AppDatabase.getDatabase(application.baseContext).taskDao()
-        Log.i(NAME,"Sent!")
+        Log.i(NAME, "Sent!")
         taskDao.getAll().forEach { task ->
-            sendNotificationText(
-                application.baseContext,
-                "Reminder!",
-                task.title
-            )
+            if (task.date < System.currentTimeMillis()) {
+                sendNotificationText(
+                    application.baseContext,
+                    "Reminder!",
+                    task.title
+                )
+            }
+
         }
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.i(NAME,"Destroyed")
+        Log.i(NAME, "Destroyed")
         messageJob?.cancel()
         serviceScope.cancel()
     }
 
     override fun onBind(intent: Intent?): IBinder? {
+        Log.i(NAME,"Binded")
         return null
     }
 }

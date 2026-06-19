@@ -44,19 +44,3 @@ fun sendNotificationText(
         .notify(System.currentTimeMillis().toInt(), notification)
 
 }
-
-@RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-fun NotifThread(context: Context){
-    Looper.prepare()
-
-    var mHandler = Executor({
-        sendNotificationText(
-            context,
-            "Title",
-            "Hi"
-        )
-    })
-    Looper.loop()
-
-
-}
