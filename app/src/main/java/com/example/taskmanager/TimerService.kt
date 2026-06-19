@@ -1,8 +1,11 @@
 package com.example.taskmanager
 
-import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresPermission
@@ -10,7 +13,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import com.example.taskmanager.data.AppDatabase
 import com.example.taskmanager.data.SettingsRepository
-import com.example.taskmanager.data.source.local.UpdateTime
 import com.example.taskmanager.util.sendNotificationText
 import kotlinx.coroutines.*
 
@@ -19,14 +21,25 @@ class TimerService : Service() {
     companion object {
         private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
         private var messageJob: Job? = null
-        private val name: String = "TimerService"
+        private const val NAME: String = "TimerService"
         private const val CHANNEL_ID = "updates_channel"
-        private const val NOTIFICATION_ID = 2
+        private const val NOTIFICATION_ID = 100
     }
 
     @RequiresPermission(value = "android.permission.POST_NOTIFICATIONS")
     override fun onCreate() {
         super.onCreate()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Updates",
+                NotificationManager.IMPORTANCE_LOW
+            )
+
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Service Running")
@@ -42,13 +55,12 @@ class TimerService : Service() {
         serviceScope.launch {
 
             SettingsRepository.getUpdateTime(application.baseContext).collect { updateTime ->
-                Log.i(name,"Freq: $updateTime")
+                Log.i(NAME,"Freq: $updateTime")
                 ChangeTimeDelay(updateTime)
             }
         }
 
     }
-
 
     /**
      *
@@ -72,7 +84,7 @@ class TimerService : Service() {
 
 
 
-            Log.i(name, "New process")
+            Log.i(NAME, "New process")
             messageJob = serviceScope.launch {
                 while (isActive) {
                     delay(repeatTime) // 1second
@@ -85,7 +97,7 @@ class TimerService : Service() {
     @RequiresPermission(value = "android.permission.POST_NOTIFICATIONS")
     private suspend fun sendMessage() {
         val taskDao = AppDatabase.getDatabase(application.baseContext).taskDao()
-        Log.i(name,"Sent!")
+        Log.i(NAME,"Sent!")
         taskDao.getAll().forEach { task ->
             sendNotificationText(
                 application.baseContext,
@@ -98,7 +110,7 @@ class TimerService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.i(name,"Destroyed")
+        Log.i(NAME,"Destroyed")
         messageJob?.cancel()
         serviceScope.cancel()
     }
