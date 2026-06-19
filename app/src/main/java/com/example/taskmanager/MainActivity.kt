@@ -14,6 +14,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        
+
         startService(Intent(this, TimerService::class.java))
         enableEdgeToEdge()
         setContent {
