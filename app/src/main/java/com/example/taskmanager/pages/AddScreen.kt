@@ -1,7 +1,6 @@
 package com.example.taskmanager.pages
 
 import android.content.Context
-import android.widget.TimePicker
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TimeInput
-import androidx.compose.material3.TimePickerSelectionMode
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -32,11 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.example.taskmanager.data.AppDatabase
 import com.example.taskmanager.data.source.local.Task
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Calendar
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.DurationUnit
 
 @ExperimentalMaterial3Api
 fun getSelectedDateTimeMillis(
@@ -117,7 +111,6 @@ fun AddScreen(
                     label = { Text("Title") },
                 )
                 Button(onClick = {
-                    // TODO: CLear input
                     coroutine.launch {
                         Add(
                             context = context,
@@ -137,7 +130,13 @@ fun AddScreen(
             DatePicker(
                 state = date,
                 showModeToggle = false,
-                title = { },
+                title = {
+                    Text(
+                        modifier = Modifier
+                            .padding(10.dp),
+                        text="Pick date when you want to be reminded from"
+                    )
+                },
                 headline = {
                     Row(
                         modifier = Modifier

@@ -5,12 +5,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import android.os.Looper
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.taskmanager.R
-import java.util.concurrent.Executor
 
 private const val CHANNEL_ID = "task_notifications"
 

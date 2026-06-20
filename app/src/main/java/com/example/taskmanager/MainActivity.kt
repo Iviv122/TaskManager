@@ -19,7 +19,6 @@ import com.example.taskmanager.ui.theme.TaskManagerTheme
 class MainActivity : ComponentActivity() {
 
     companion object {
-        // Unique request code for permission request
         private const val PERMISSION_REQUEST_CODE = 3141519
     }
 
@@ -53,12 +52,11 @@ class MainActivity : ComponentActivity() {
         val permissionsToRequest = permissions.filter { permission ->
             ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
         }
-        // If there are permissions that need to be requested, ask the user for them
         if (permissionsToRequest.isNotEmpty()) {
             ActivityCompat.requestPermissions(
                 this,
-                permissionsToRequest.toTypedArray(), // Convert list to array
-                PERMISSION_REQUEST_CODE // Pass the request code
+                permissionsToRequest.toTypedArray(),
+                PERMISSION_REQUEST_CODE
             )
         }
     }

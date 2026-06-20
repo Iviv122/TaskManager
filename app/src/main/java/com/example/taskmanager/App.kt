@@ -25,7 +25,6 @@ import com.example.taskmanager.pages.AddScreen
 import com.example.taskmanager.pages.Destination
 import com.example.taskmanager.pages.HomeScreen
 import com.example.taskmanager.pages.SettingsScreen
-import com.example.taskmanager.util.sendNotificationText
 
 
 @Composable

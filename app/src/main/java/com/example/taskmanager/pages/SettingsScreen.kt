@@ -63,7 +63,7 @@ public fun SettingsScreen(context: Context) {
                 )
             ) {
                 Text(
-                    "Remind frequency "
+                    "Remind frequency"
                 )
                 Box {
 
