@@ -1,6 +1,11 @@
 # Task manager, date based todo app
 Made thanks to ![Macondo Hack Club](https://macondo.hackclub.com/)! 
 
+<img width="142.4" height="320" alt="photo_5886578345523219911_y" src="https://github.com/user-attachments/assets/704ac1cf-e2d8-42be-96b9-6c9b34d73a53" />
+<img width="142.5" height="320" alt="photo_5886578345523219910_y" src="https://github.com/user-attachments/assets/1790e698-1167-44e4-a411-a93745a006ff" />
+<img width="142.4" height="320" alt="photo_5886578345523219912_y" src="https://github.com/user-attachments/assets/19b1b1db-d065-4520-843b-5e341ea1bdbd" />
+
+
 > Initally i thought this project has nice feature which i hadn't met before but in practice it was already done in some other projects TwT
 
 Made with Android Studio, including
