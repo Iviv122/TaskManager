@@ -34,4 +34,5 @@ Permissions used
 - FOREGROUND_SERVICE and FOREGROUND_SERVICE_SPECIAL_USE - Used to run service, it runs every X minutes **
 
 > *- It is possible to use app without notifications, no errors encoutered
+
 > *-- On tested devices no permissions were asked, with and without google services
